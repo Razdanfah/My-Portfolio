@@ -1,0 +1,19 @@
+groups:
+  - name: application-server-alerts
+    rules:
+      - alert: HighCPUUsage
+        expr: |
+          100 * (
+            1 - avg by (instance, server_ip) (
+              rate(node_cpu_seconds_total{mode="idle"}[5m])
+            )
+          ) > 80
+        for: 2m
+
+        labels:
+          severity: warning
+
+        annotations:
+          summary: "High CPU usage on {{ $labels.server_ip }}"
+          description: "CPU utilization on application server {{ $labels.server_ip }} has remained above 80% for at least 2 minutes."
+          current_cpu_usage: '{{ printf "%.2f" $value }}%'

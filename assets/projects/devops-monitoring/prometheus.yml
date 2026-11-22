@@ -1,0 +1,31 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+  external_labels:
+    monitor: 'example'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['localhost:9093']
+
+# Load rules
+rule_files:
+  - "cpu-alert.yml"
+
+# Scrape configurations
+scrape_configs:
+
+  # Prometheus monitoring
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    scrape_timeout: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Docker/App Server monitoring
+  - job_name: 'node'
+    static_configs:
+      - targets: ['172.31.25.234:9100']
